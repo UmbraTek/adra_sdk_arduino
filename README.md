@@ -26,12 +26,12 @@
 
 # Install SDK to Arduino
 
-Download the SDK ,and unzip it to the libraries path of Arduino. Then restart Arduino IDE.
+Download the SDK ,and unzip it to the libraries path of Arduino. Then restart Arduino IDE. Then you can see the sdk library in **Sketch->Include Library->ADRA_SDK_ARDUINO**
 
-<img src="./doc/sdk.png" style="width:600px">
+<!-- <img src="./doc/sdk.png" style="width:600px"> -->
 
 # Reference example
 
-You can reference example in the sdk.
+You can reference example in the sdk. Find the exmaple in **File->Examples->ADRA_SDK_ARDUINO**
 
-<img src="./doc/example.png" style="width:600px">
+<!-- <img src="./doc/example.png" style="width:600px"> -->
