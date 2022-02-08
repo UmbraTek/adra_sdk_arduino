@@ -240,7 +240,7 @@ int AdraApi::get_temp_limit(int id, int8_t *min, int8_t *max) {
   return ret;
 }
 
-int AdraApi::set_temp_limit(int id, int8_t *min, int8_t *max) {
+int AdraApi::set_temp_limit(int id, int8_t min, int8_t max) {
   this->_id(id);
   uint8_t txdata[2] = {min, max};
   this->_send(ROSMOS_RW::W, ADRA_REG_TEMP_LIMIT, txdata, NULL);
