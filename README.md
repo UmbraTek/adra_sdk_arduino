@@ -6,6 +6,8 @@
     #include <adra_api.h>
     AdraApi adraApi(2,3,4);
 
+<img src="./doc/line.png" style="width:600px">
+
 >AdraApi Constructor is 
 
     AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
