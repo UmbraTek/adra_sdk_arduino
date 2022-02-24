@@ -1,7 +1,7 @@
 # Adra Arduino SDK
 
 
- >Sdk is use the SoftwareSerial for serial comminucate, you must config the correct **RxPin** ，**TxPin** and **RtsPin**. if the **RxPin** is pin 2, **TxPin** is pin 3, **rtsPin** is pin 4. you can init like this.
+ >Sdk is use the SoftwareSerial for serial comminucate, you must config the correct **RxPin** ，**TxPin** and **RtsPin**. if the **RxPin** is pin 2, **TxPin** is pin 3, **RtsPin** is pin 4. you can init like this.
 
     #include <adra_api.h>
     AdraApi adraApi(2,3,4);
