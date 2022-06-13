@@ -27,6 +27,7 @@ class ROSMOSDecode {
   ~ROSMOSDecode();
   void flush(uint8_t fromid, uint8_t toid);
   int8_t put(uint8_t *tem_buf, int length, uint8_t *buf);
+  int8_t put(uint8_t rxch, uint8_t *buf);
 
  private:
   uint8_t rxstate;

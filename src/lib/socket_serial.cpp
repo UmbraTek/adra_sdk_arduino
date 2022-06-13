@@ -7,21 +7,77 @@
 #include "socket_serial.h"
 
 SocketSerial::SocketSerial(uint8_t rxPin, uint8_t txPin, uint8_t rts) {
-  softwareSerial = new SoftwareSerial(rxPin, txPin);
   this->rtsPin = rts;
   this->rx_decoder = new ROSMOSDecode(0, 0);
+  this->isSoftwareSerial = true;
+#if defined(SoftwareSerial_h)
+  serialPort = new SoftwareSerial(rxPin, txPin);
+#endif
 }
-SocketSerial::~SocketSerial() { delete softwareSerial; }
 
-void SocketSerial::begin(long speed) {
-  softwareSerial->begin(speed);
+SocketSerial::SocketSerial(uint8_t serial_port, uint8_t rts) {
+  this->rtsPin = rts;
+  this->rx_decoder = new ROSMOSDecode(0, 0);
+  this->isSoftwareSerial = false;
+  switch (serial_port) {
+#if defined(PIN_SERIAL1_RX)
+    case 1:
+      serialPort = &Serial1;
+      return;
+#endif
+#if defined(PIN_SERIAL2_RX)
+    case 2:
+      serialPort = &Serial2;
+      return;
+#endif
+#if defined(PIN_SERIAL3_RX)
+    case 3:
+      serialPort = &Serial3;
+      return;
+#endif
+#if defined(PIN_SERIAL4_RX)
+    case 4:
+      serialPort = &Serial4;
+      return;
+#endif
+#if defined(PIN_SERIAL5_RX)
+    case 5:
+      serialPort = &Serial5;
+      return;
+#endif
+#if defined(PIN_SERIAL6_RX)
+    case 6:
+      serialPort = &Serial6;
+      return;
+#endif
+  }
+}
+
+SocketSerial::~SocketSerial() { delete serialPort; }
+
+void SocketSerial::begin(long baud) {
+  if (this->isSoftwareSerial) {
+#if defined(SoftwareSerial_h)
+    ((SoftwareSerial *)serialPort)->begin(baud);
+#endif
+  } else {
+    ((HardwareSerial *)serialPort)->begin(baud);
+  }
   pinMode(this->rtsPin, OUTPUT);
 }
 
-void SocketSerial::end() { softwareSerial->end(); }
+void SocketSerial::end() {
+  if (this->isSoftwareSerial) {
+#if defined(SoftwareSerial_h)
+    ((SoftwareSerial *)serialPort)->end();
+#endif
+  } else {
+    ((HardwareSerial *)serialPort)->end();
+  }
+}
 
 void SocketSerial::flush(uint8_t master_id, uint8_t slave_id) {
-  softwareSerial->flush();
+  serialPort->flush();
   rx_decoder->flush(master_id, slave_id);
 }
 
@@ -29,12 +85,25 @@ int SocketSerial::is_error() { return 0; }
 
 int8_t SocketSerial::write(uint8_t *buf, uint8_t len) {
   digitalWrite(this->rtsPin, HIGH);  // RTS high is send
-  int8_t num = softwareSerial->write(buf, len);
-  if (num == len) {
-    return 0;
-  } else {
-    return -1;
-  }
+  delay(5);
+  int8_t num = 0;
+    if (this->isSoftwareSerial) {
+  #if defined(SoftwareSerial_h)
+      num = ((SoftwareSerial *)serialPort)->write(buf, len);
+      ((SoftwareSerial *)serialPort)->flush();
+  #endif
+    } else {
+      num = ((HardwareSerial *)serialPort)->write(buf, len);
+      ((HardwareSerial *)serialPort)->flush();
+    }
+
+    digitalWrite(this->rtsPin, LOW);
+    if (num == len) {
+      return 0;
+    } else {
+      return -1;
+    }
+  return -1;
 }
 
 /*
@@ -42,24 +111,18 @@ int8_t SocketSerial::write(uint8_t *buf, uint8_t len) {
     return -1 is false
 */
 int8_t SocketSerial::read(uint8_t *buf, int timeout) {
+  // digitalWrite(this->rtsPin, LOW);
   memset(buf, 0, sizeof(buf));
-  digitalWrite(this->rtsPin, LOW);  // RTS low is recevie
-  int count = 0;
+  countTime = millis();
   while (true) {
-    int len = softwareSerial->available();
-    if (len > 0) {
-      uint8_t tem_buf[len] = {0};
-      int length = softwareSerial->readBytes(tem_buf, len);
-
-      int8_t ret = rx_decoder->put(tem_buf, length,
-                                   buf);  // ret is the one protocol data pack length; ret > 0 is say that receive one pack
-
+    if (serialPort->available() > 0) {
+      uint8_t byte = serialPort->read();
+      int8_t ret = rx_decoder->put(byte, buf);
       if (ret > 0) {
         return ret;
       }
     }
-    count = count + 1;
-    if (count > timeout) {
+    if ( millis() - countTime > timeout) {
       return -1;
     }
   }

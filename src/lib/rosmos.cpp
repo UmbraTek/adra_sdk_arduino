@@ -40,6 +40,17 @@ ROSMOSType::ROSMOSType() {
   memset(this->data, 0, sizeof(this->data));
 }
 
+void ROSMOSType::init() {
+  this->master_id = 0;
+  this->slave_id = 0;
+  this->state = 0;
+  this->len = 0;
+  this->rw = 0;
+  this->cmd = 0;
+  this->crc = 0;
+  memset(this->data, 0, sizeof(this->data));
+}
+
 ROSMOSType::~ROSMOSType() {}
 
 uint8_t ROSMOSType::pack(uint8_t *buf) {
@@ -62,7 +73,6 @@ int8_t ROSMOSType::unpack(uint8_t *buf, uint8_t length) {
   if (length < 6) {
     return ROSMOS_RX_ERROR::LEN;
   }
-
   this->len = buf[2] & 0x7F;
 
   if (this->len + 5 != length) {
@@ -85,6 +95,12 @@ int8_t ROSMOSType::unpack(uint8_t *buf, uint8_t length) {
 
 ROSMOSClient::ROSMOSClient(uint8_t rxPin, uint8_t txPin, uint8_t rts, uint8_t master_id, uint8_t slave_id) {
   this->port = new SocketSerial(rxPin, txPin, rts);
+  this->master_id = master_id;
+  this->slave_id = slave_id;
+}
+
+ROSMOSClient::ROSMOSClient(uint8_t serial_port, uint8_t rts, uint8_t master_id, uint8_t slave_id) {
+  this->port = new SocketSerial(serial_port, rts);
   this->master_id = master_id;
   this->slave_id = slave_id;
 }
@@ -131,11 +147,10 @@ int8_t ROSMOSClient::pend(ROSMOSType *tx_ROSMOS, ROSMOSType *rx_ROSMOS, uint8_t 
   if (len < 6) {
     return ret;
   }
-
   ret = rx_ROSMOS->unpack(readbuf, len);
   if (ret != 0) {
     return ret;
-  } else if (rx_ROSMOS->master_id != tx_ROSMOS->slave_id) {
+  } else if (rx_ROSMOS->master_id != tx_ROSMOS->slave_id && tx_ROSMOS->slave_id != 0x55) {
     ret = ROSMOS_RX_ERROR::M_ID;
   } else if (rx_ROSMOS->slave_id != tx_ROSMOS->master_id) {
     ret = ROSMOS_RX_ERROR::S_ID;
@@ -148,6 +163,5 @@ int8_t ROSMOSClient::pend(ROSMOSType *tx_ROSMOS, ROSMOSType *rx_ROSMOS, uint8_t 
   } else if (rx_ROSMOS->cmd != tx_ROSMOS->cmd) {
     ret = ROSMOS_RX_ERROR::CMD;
   }
-
   return ret;
 }

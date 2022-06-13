@@ -1,10 +1,11 @@
 #include <adra_api.h>
-// if the rxPin is 2 pin, txPin is 3 pin, rtsPin is 4 pin. you can init like this.
-AdraApi adraApi(2,3,4);
+
 void setup() {
   // put your setup code here, to run once:
   // serial baudrate
-  Serial.begin(500000);
+  Serial.begin(9600);
+  // if Use HardwareSerial Serial1 rtsPin is 4 pin. you can init like this.
+  AdraApi adraApi(1,4);
   // adra baudrate
   adraApi.connect(115200);
   int ret;

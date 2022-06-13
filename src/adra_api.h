@@ -11,12 +11,13 @@
 #include "lib/adra_reg.h"
 #include "lib/rosmos.h"
 
-const uint8_t ROSMOS_TIMEOUT = 100;
+const uint8_t ROSMOS_TIMEOUT = 1000;
 const uint8_t R_LEN = 64;
 
 class AdraApi {
  public:
-  AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
+  // AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
+  AdraApi(uint8_t serial_port, uint8_t rts);
   ~AdraApi();
 
   void connect(long speed);
@@ -41,6 +42,8 @@ class AdraApi {
   int set_elec_ratio(int id, float ratio);
   int get_motion_dir(int id, uint8_t *dir);
   int set_motion_dir(int id, uint8_t dir);
+  int get_iwdg_cyc(int id, int32_t *buf);
+  int set_iwdg_cyc(int id, uint32_t buf);
   int get_temp_limit(int id, int8_t *min, int8_t *max);
   int set_temp_limit(int id, int8_t min, int8_t max);
   int get_volt_limit(int id, uint8_t *min, uint8_t *max);
@@ -120,11 +123,23 @@ class AdraApi {
   int get_tau_adrc_param(int id, uint8_t i, float *param);
   int set_tau_adrc_param(int id, uint8_t i, float param);
 
+  int set_cpos_target(uint8_t sid, uint8_t eid, float *pos);
+  int set_ctau_target(uint8_t sid, uint8_t eid, float *tau);
+  int set_cpostau_target(uint8_t sid, uint8_t eid, float *pos, float *tau);
+  int get_spostau_current(int id, int *num, float *pos, float *tau);
+  int get_cpostau_current(uint8_t sid, uint8_t eid, int *num, float *pos, float *tau, int *ret);
+
+ protected:
+  uint8_t RW_R = 0;
+  uint8_t RW_W = 1;
+  SERVO_REG reg_;
+
  private:
   uint8_t master_id;
   uint8_t slave_id;
   ROSMOSClient *port;
   ROSMOSType *tx_data;
+  ROSMOSType *rx_data;
 
   int _set_motion_mode(int id, uint8_t mode);
   int _set_motion_enable(int id, uint8_t able);
