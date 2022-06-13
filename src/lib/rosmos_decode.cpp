@@ -114,11 +114,6 @@ int8_t ROSMOSDecode::put(uint8_t rxch, uint8_t *buf) {
     this->rxstate = UX2HEX_RXSTART::CRC2;
   } else if (UX2HEX_RXSTART::CRC2 == this->rxstate) {
     this->rxbuf[this->data_idx + 4] = rxch;
-    // for(int i = 0;i<10; i++){
-    //    char buffer[5];
-    //    sprintf(buffer, "%02x", this->rxbuf[i]);
-    //    Serial.println(buffer);
-    // }
     this->rxstate = UX2HEX_RXSTART::FROMID;
     uint16_t crc16 = crc_modbus(this->rxbuf, this->len + 3);
     uint8_t crc_1 = (crc16 / 256) % 256;

@@ -27,8 +27,8 @@ class ROSMOS_RX_ERROR {
 
 class ROSMOS_RW {
  public:
-  const uint8_t R = 0;
-  const uint8_t W = 1;
+  static const uint8_t R = 0;
+  static const uint8_t W = 1;
 };
 
 class ROSMOSType {
@@ -39,7 +39,6 @@ class ROSMOSType {
   ~ROSMOSType();
   uint8_t pack(uint8_t *buf);
   int8_t unpack(uint8_t *buf, uint8_t length);
-  void init();
   uint8_t master_id;
   uint8_t slave_id;
   uint8_t state;
@@ -53,9 +52,6 @@ class ROSMOSType {
 class ROSMOSClient {
  public:
   ROSMOSClient(uint8_t rxPin, uint8_t txPin, uint8_t rts, uint8_t master_id,
-               uint8_t slave_id);  // option is array [ rxPin, txPin, rts] for serial connect
-
-  ROSMOSClient(uint8_t serial_port, uint8_t rts, uint8_t master_id,
                uint8_t slave_id);  // option is array [ rxPin, txPin, rts] for serial connect
   // ~ROSMOSClient();
   uint8_t slave_id;

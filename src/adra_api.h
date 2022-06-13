@@ -11,13 +11,12 @@
 #include "lib/adra_reg.h"
 #include "lib/rosmos.h"
 
-const uint8_t ROSMOS_TIMEOUT = 1000;
+const uint8_t ROSMOS_TIMEOUT = 100;
 const uint8_t R_LEN = 64;
 
 class AdraApi {
  public:
-  // AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
-  AdraApi(uint8_t serial_port, uint8_t rts);
+  AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
   ~AdraApi();
 
   void connect(long speed);
@@ -130,16 +129,17 @@ class AdraApi {
   int get_cpostau_current(uint8_t sid, uint8_t eid, int *num, float *pos, float *tau, int *ret);
 
  protected:
-  uint8_t RW_R = 0;
-  uint8_t RW_W = 1;
-  SERVO_REG reg_;
+  uint8_t ADRA_REG_CPOS_TARGET[5] = {0x60, ' ', ' ', 0, ' '};        // startId endId pos*Axis
+  uint8_t ADRA_REG_CTAU_TARGET[5] = {0x61, ' ', ' ', 0, ' '};        // startId endId tau*Axis
+  uint8_t ADRA_REG_CPOSTAU_TARGET[5] = {0x62, ' ', ' ', 0, ' '};     // startId endId (pos+tau)*Axis
+  uint8_t ADRA_REG_SPOSTAU_CURRENT[5] = {0x68, 0, 8 + 1, ' ', ' '};  // Gets the current position and torque of an actuator
+  uint8_t ADRA_REG_CPOSTAU_CURRENT[5] = {0x69, 2, 8 + 1, ' ', ' '};  // startId endId
 
  private:
   uint8_t master_id;
   uint8_t slave_id;
   ROSMOSClient *port;
   ROSMOSType *tx_data;
-  ROSMOSType *rx_data;
 
   int _set_motion_mode(int id, uint8_t mode);
   int _set_motion_enable(int id, uint8_t able);

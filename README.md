@@ -1,20 +1,19 @@
 # Adra Arduino SDK
+    Test passed on UNO R3.
 
-    Test passed on MEGA2560, DUE.
-
- >Sdk is use the HardwareSerial for serial comminucate, you must config the correct **serial_port** is **Serial1**, **rtsPin** is **4** pin. you can init like this.
+ >Sdk is use the SoftwareSerial for serial comminucate, you must config the correct **rxPin** ，**txPin** and **rtsPin**. if the **rxPin** is 2 pin, **txPin** is 3 pin, **rtsPin** is 4 pin. you can init like this.
 
     #include <adra_api.h>
-    AdraApi adraApi(1,4);
+    AdraApi adraApi(2,3,4);
 
-<img src="./doc/line1.png" style="width:600px">
+<img src="./doc/line.png" style="width:600px">
 
 >AdraApi Constructor is 
 
-    AdraApi(uint8_t serial_port, uint8_t rts);
+    AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
 
 
->After that, you need to set the baud for connect. for example, baud is 115200. (**if you need to change the baud rate, you can refer [change the baud rate](./doc/change_id.md) with [Adra Assistant](https://www.umbratek.com/download-center).**)
+>After that, you need to set the baud for connect. for example, baud is 115200. (***pay attention, the [max baud rate](https://www.arduino.cc/en/Reference/SoftwareSerialBegin) of arduino is 115200, if the adra's baud more than it, you need [change the baud rate](./doc/change_id.md) with [Adra Assistant](https://www.umbratek.com/download-center).***)
 
     adraApi.connect(115200);
 
