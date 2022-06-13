@@ -13,7 +13,7 @@
     AdraApi(uint8_t rxPin, uint8_t txPin, uint8_t rts);
 
 
->After that, you need to set the baud for connect. for example, baud is 115200. (***pay attention, the [max baud rate](https://www.arduino.cc/en/Reference/SoftwareSerialBegin) of arduino is 115200, if the adra's baud more than it, you need [change the baud rate](./doc/change_id.md) with [Adra Assistant](https://www.umbratek.com/download-center).***)
+>After that, you need to set the baud for connect. for example, baud is 115200. (***pay attention, the [max baud rate](https://www.arduino.cc/en/Reference/SoftwareSerialBegin) of arduino SoftwareSerial is 115200, if the adra's baud more than it, you need [change the baud rate](./doc/change_id.md) with [Adra Assistant](https://www.umbratek.com/download-center).***)
 
     adraApi.connect(115200);
 
