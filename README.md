@@ -14,7 +14,7 @@
     AdraApi(uint8_t serial_port, uint8_t rts);
 
 
->After that, you need to set the baud for connect. for example, baud is 115200. (*** if you need to change the baud rate, you can refer [change the baud rate](./doc/change_id.md) with [Adra Assistant](https://www.umbratek.com/download-center).***)
+>After that, you need to set the baud for connect. for example, baud is 115200. (**if you need to change the baud rate, you can refer [change the baud rate](./doc/change_id.md) with [Adra Assistant](https://www.umbratek.com/download-center).**)
 
     adraApi.connect(115200);
 
